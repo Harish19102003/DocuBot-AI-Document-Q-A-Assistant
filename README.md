@@ -15,7 +15,7 @@ User Question -> Embed Question -> Find Similar Chunks -> Send to Groq LLaMA 3 -
 This is called RAG (Retrieval Augmented Generation).
 
 ---
-
+![img](DocuBot-AI-Document-Q-A-Assistant\assets\Rag.png)
 ## Tech Stack
 
 | Tool | Purpose |
