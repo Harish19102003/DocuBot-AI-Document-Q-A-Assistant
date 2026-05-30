@@ -1,7 +1,7 @@
-langchain_classic
-langchain_community
-langchain_core
-langchain_groq
-langchain_huggingface
-langchain_text_splitters
-streamlit
+langchain_classic==1.0.7
+langchain_community==0.4.2
+langchain_core==1.4.0
+langchain_groq==1.1.2
+langchain_huggingface==1.2.2
+langchain_text_splitters==1.1.2
+streamlit==1.57.0
