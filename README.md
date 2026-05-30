@@ -6,7 +6,7 @@ Upload any PDF and ask questions about it in plain English. Completely free to r
 
 ## How it works
 
-![This is called RAG (Retrieval Augmented Generation).](assets\\Rag.png)
+![This is called RAG (Retrieval Augmented Generation).](assets/Rag.png)
 
 ---
 ## Tech Stack
