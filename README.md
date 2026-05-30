@@ -6,16 +6,9 @@ Upload any PDF and ask questions about it in plain English. Completely free to r
 
 ## How it works
 
-```
-PDF -> Extract Text -> Split into Chunks -> Embed (HuggingFace) -> Store in ChromaDB
-                                                                          |
-User Question -> Embed Question -> Find Similar Chunks -> Send to Groq LLaMA 3 -> Answer
-```
-
-This is called RAG (Retrieval Augmented Generation).
+![This is called RAG (Retrieval Augmented Generation).](assets\\Rag.png)
 
 ---
-![img](DocuBot-AI-Document-Q-A-Assistant\assets\Rag.png)
 ## Tech Stack
 
 | Tool | Purpose |
