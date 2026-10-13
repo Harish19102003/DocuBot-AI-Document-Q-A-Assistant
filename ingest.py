@@ -2,15 +2,12 @@
 import os
 import shutil
 from pathlib import Path
-
 from langchain_community.document_loaders import PyPDFLoader,TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
-from config import CHROMA_DB_DIR, EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
-
-COLLECTION_NAME = "docubot"
+from config import CHROMA_DB_DIR, EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP, COLLECTION_NAME
 
 
 def embedding(model_name=EMBEDDING_MODEL):
@@ -32,8 +29,8 @@ class VectorStore:
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.collection_name = collection_name
-        self.chroma_db_dir = Path(Chroma_db_dir).resolve()
-        self.embeddings = embeddings or embedding()
+        self.chroma_db_dir = Chroma_db_dir
+        self.embeddings = embedding()
         self.vectordb = None
 
         if self.chunk_size <= 0:
@@ -148,7 +145,6 @@ class VectorStore:
             query_text,
             k=top_k,
         )
-
 
 if __name__ == "__main__":
     import sys
