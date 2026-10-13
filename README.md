@@ -6,7 +6,7 @@ The embedding model runs locally for free. Answer generation uses the Groq API, 
 
 ## Architecture
 
-![DocuBot RAG Architecture](assets/Rag.png)
+![DocuBot RAG Architecture](data/Rag.png)
 
 **RAG workflow:**
 1. Upload a document.
