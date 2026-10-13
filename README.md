@@ -1,103 +1,139 @@
 # DocuBot — AI Document Q&A Assistant
 
-Upload any PDF and ask questions about it in plain English. Completely free to run — no paid APIs needed.
+Upload a PDF and ask questions about its content in plain English. DocuBot uses Retrieval-Augmented Generation (RAG) to retrieve relevant document passages and generate context-based answers.
 
----
+The embedding model runs locally for free. Answer generation uses the Groq API, subject to its current free-tier limits and availability.
 
-## How it works
+## Architecture
 
-![This is called RAG (Retrieval Augmented Generation).](assets/Rag.png)
+![DocuBot RAG Architecture](assets/Rag.png)
 
----
+**RAG workflow:**
+1. Upload a document.
+2. Extract text and split it into smaller chunks.
+3. Convert chunks into embeddings using HuggingFace.
+4. Store and retrieve relevant chunks using ChromaDB.
+5. Send the retrieved context to the language model.
+6. Display the generated answer in Streamlit.
+
 ## Tech Stack
 
 | Tool | Purpose |
 |---|---|
+| Python | Core application |
 | LangChain | RAG pipeline orchestration |
-| ChromaDB | Vector database — stores and searches embeddings |
-| HuggingFace (all-MiniLM-L6-v2) | Embeddings — free, runs locally on your machine |
-| Groq + LLaMA 3 | LLM for answering questions — free API |
-| Streamlit | Frontend UI |
+| ChromaDB | Vector storage and similarity search |
+| HuggingFace `all-MiniLM-L6-v2` | Local text embeddings |
+| Groq API `openai/gpt-oss-120b`| Language-model inference, Configured LLM |
+| Streamlit | Interactive web interface |
 | Docker | Containerization |
-
----
 
 ## Project Structure
 
-```
-docubot/
-├── app.py         <- Streamlit frontend, handles UI and user interaction
-├── rag.py         <- Builds the QA chain using Groq LLaMA 3
-├── ingest.py      <- Loads PDF, splits into chunks, embeds and stores in ChromaDB
+```text
+DocuBot-AI-Document-Q-A-Assistant/
+├── data/
+│   └── sample files
+├── assets/
+│   └── Rag.png
+├── app.py
+├── rag.py
+├── ingest.py
+├── config.py
+├── eval_retrieval.py
 ├── requirements.txt
 ├── Dockerfile
+├── .gitignore
 └── README.md
 ```
 
----
-
 ## Setup and Run Locally
 
-**Step 1 — Clone the repo**
+### 1. Clone the repository
+
 ```bash
 git clone https://github.com/Harish19102003/DocuBot-AI-Document-Q-A-Assistant.git
-cd docDocuBot-AI-Document-Q-A-Assistantubot
+cd DocuBot-AI-Document-Q-A-Assistant
 ```
 
-**Step 2 — Install dependencies**
+### 2. Install dependencies
+
+Create and activate a virtual environment, then install the requirements.
+
 ```bash
+python.exe -m pip install --upgrade pip
+python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-The HuggingFace embedding model (all-MiniLM-L6-v2) will download automatically on first run (~90MB) and cache locally after that.
+The HuggingFace embedding model downloads automatically on its first run and is cached locally.
 
-**Step 3 — Get a free Groq API key**
+### 3. Configure the API key
 
-Go to [console.groq.com](https://console.groq.com), sign up for free (no credit card needed), and copy your API key.
+Create a `.env` file in the project root:
 
-**Step 4 — Run the app**
+```dotenv
+GROQ_API_KEY=paste_your_key_here
+```
+
+Get a key from [Groq Console](https://console.groq.com/keys). Keep your real API key private and never commit `.env` to Git.
+
+### 4. Run the application
+
 ```bash
 streamlit run app.py
 ```
 
-Open `http://localhost:8501` in your browser. Enter your Groq API key in the sidebar, upload a PDF, and start asking questions.
-
----
+Open [http://localhost:8501](http://localhost:8501) in your browser, upload a supported document, and ask questions about its content.
 
 ## Run with Docker
 
+If the repository includes a configured Docker Compose file, create your local `.env` file and run:
+
+```bash
+docker compose up --build
+```
+
+Otherwise, build and run using the included Dockerfile:
+
 ```bash
 docker build -t docubot .
-docker run -p 8501:8501 docubot
+docker run --env-file .env -p 8501:8501 docubot
 ```
 
----
+Ensure the Docker image exposes the Streamlit port and that persistent document/vector-store storage is configured if needed.
 
-## Deploy on Streamlit Cloud (Free)
+## Tests and Evaluation
 
-1. Push your code to GitHub
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Connect your GitHub repo
-4. Go to Settings -> Secrets and add:
+Run automated tests:
+
+```bash
+pytest
+python eval_retrieval.py --docs data --qa data/qa_pairs.json --k 4
 ```
-GROQ_API_KEY = "gsk_your_key_here"
-```
-5. Click Deploy
 
----
+### Retrieval Evaluation Results
+
+| Metric | Measured result |
+|---|---:|
+| Hit Rate @4 | 1.00 (100%) |
+| Mean Reciprocal Rank (MRR) | 0.792 |
+
+These results reflect the current eight-question evaluation set. Hit Rate measures how often a relevant expected phrase appears in the top four retrieved chunks. MRR measures the ranking of the first matching result. They do not independently establish the factual accuracy of generated answers.
 
 ## Example Use Cases
 
-- Upload a textbook and ask exam questions
-- Upload a research paper and get a summary
-- Upload a job description and ask what skills are needed
-- Upload your resume and ask how to improve it
+- Ask questions about textbook chapters.
+- Explore research papers and technical documents.
+- Identify required skills from a job description.
+- Review a resume and ask questions about its contents.
+- Retrieve relevant information from policy documents.
 
----
+## Limitations
 
-## Customization Ideas
+- Scanned PDFs without extractable text require OCR, which is not currently supported.
+- Answer generation requires access to the configured Groq API.
+- API usage is subject to provider limits and availability.
+- The demo does not include user authentication.
+- Retrieval and answer quality depend on document text extraction, chunking, and the relevance of retrieved passages.
 
-- Add support for multiple PDFs at once
-- Show the source page number along with each answer
-- Save chat history to a database
-- Swap LLaMA 3 with a different Groq model like mixtral-8x7b

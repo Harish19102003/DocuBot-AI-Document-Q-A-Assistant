@@ -1,0 +1,13 @@
+
+services:
+  docubot:
+    build: .
+    container_name: docubot
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./data/uploads:/app/data/uploads
+      - ./chroma_db:/app/chroma_db
+    restart: unless-stopped
